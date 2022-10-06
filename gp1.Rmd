@@ -1,6 +1,6 @@
 ---
 title: "HW6 Telemarketing"
-author: "Gino Assenmacher, Johanna Langemeyer, Lukas Resch, Benjamin Roemer"
+author: "Gino Assenmacher, Johanna Langemeyer, Lukas Resch, Benjamin Roemer, Nathan Koenig"
 date: "10/04/2022"
 output:
   html_document:
