@@ -4,7 +4,7 @@ author: "Gino Assenmacher, Johanna Langemeyer, Lukas Resch, Benjamin Roemer, Nat
 date: "10/04/2022"
 output:
   html_document:
-    toc: true
+    toc: false
     theme: readable
     highlight: tango
     code_folding: show
