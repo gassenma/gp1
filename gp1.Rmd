@@ -92,7 +92,7 @@ tele_test_ann <- tele_norm[test_set_ann,]
 
 library(neuralnet)
 
-ann_model <- neuralnet(formula = yyes ~ ., data = tele_train_ann, hidden = 5)
+#ann_model <- neuralnet(formula = yyes ~ ., data = tele_train_ann, hidden = 5)
 
 tele_test_ann$extra <- tele_test_ann$yyes
 tele_test_ann$yyes <- NULL
@@ -105,7 +105,7 @@ predicted_strength <- ann_results$net.result
 prediction_ann <- predict(ann_model, tele_test_ann)
 yyes_prediction <- ifelse(prediction_ann < 0.5, 0, 1)
 
-#cor(predicted_strength, tele_test_ann$yyes)
+cor(predicted_strength, tele_test_ann$yyes)
 
 ```
 
@@ -119,3 +119,5 @@ CrossTable(x = tele_test_ann$yyes, y = yyes_prediction, prop.chisq = FALSE)
 confusionMatrix(as.factor(yyes_prediction), as.factor(tele_test_ann$yyes), positive = "1")
 
 ```
+
+I am making changes to the file
