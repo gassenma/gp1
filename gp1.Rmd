@@ -155,6 +155,28 @@ confusionMatrix(knnModel, as.factor(tele_test_knn_labels), positive = "1")
 
 ```{r}
 
+set.seed(12345)
+test_set_lr <- sample(1:nrow(tele), 10000)
+
+tele_train_lr <- tele[-test_set_lr,]
+tele_test_lr <- tele[test_set_lr,]
+
+tele_train_lr$y <- as.factor(tele_train_lr$y)
+
+lr_model <- glm(y ~ contact * month + campaign + pdaysdummy + poutcome + emp.var.rate + cons.price.idx + cons.conf.idx, family = "binomial", data = tele_train_lr)
+
+lr_predict <- as.data.frame(predict(lr_model, newdata = tele_test_lr, type = "response"))
+lr_results <- ifelse(lr_predict$`predict(lr_model, newdata = tele_test_lr, type = "response")` > 0.25, 1, 0)
+
+library(class)
+library(caret)
+library(gmodels)
+
+tele_test_lr$V1 <- ifelse(tele_test_lr$y == "no", 0, 1)
+
+CrossTable(x = tele_test_lr$y, y = lr_results, prop.chisq = FALSE)
+confusionMatrix(as.factor(lr_results), as.factor(tele_test_lr$V1), positive = "1")
+
 ```
 
 
