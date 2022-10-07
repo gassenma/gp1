@@ -92,7 +92,7 @@ tele_test_ann <- tele_norm[test_set_ann,]
 
 library(neuralnet)
 
-#ann_model <- neuralnet(formula = yyes ~ ., data = tele_train_ann, hidden = 5)
+#ann_model <- neuralnet(formula = yyes ~ ., data = tele_train_ann, hidden = c(5,3))
 
 tele_test_ann$extra <- tele_test_ann$yyes
 tele_test_ann$yyes <- NULL
