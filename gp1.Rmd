@@ -119,3 +119,17 @@ CrossTable(x = tele_test_ann$yyes, y = yyes_prediction, prop.chisq = FALSE)
 confusionMatrix(as.factor(yyes_prediction), as.factor(tele_test_ann$yyes), positive = "1")
 
 ```
+
+## KNN MODEL
+
+```{r}
+
+```
+
+
+## LOGISTIC REGRESSION
+
+```{r}
+
+```
+
