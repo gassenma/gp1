@@ -185,7 +185,7 @@ ann_results <- yyes_prediction
 knn_results <- ifelse(as.numeric(knnPred) > 1, 1, 0)
 ann_results <- as.numeric(ann_results)
 
-final_pred <- ifelse((lr_results + knn_results + ann_results) > 1, 1, 0)
+final_pred <- ifelse((lr_results + knn_results + ann_results) > 0, 1, 0)
 
 CrossTable(x = tele_test_lr$y, y = final_pred, prop.chisq = FALSE)
 confusionMatrix(as.factor(final_pred), as.factor(tele_test_lr$V1), positive = "1")
