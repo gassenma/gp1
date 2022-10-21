@@ -124,7 +124,7 @@ for (index in c(2,4,5)) {
   
   cor(predicted_strength, tele_test_ann$yyes)
   
-  assign(paste("ann_final_", index), yyes_prediction)
+  assign(paste("ann_final_", index, sep = ""), yyes_prediction)
 
 }
 
@@ -174,7 +174,9 @@ for (index in c(2,4,5)) {
   set.seed(4222)
   test_set <- sample(1:nrow(tele_norm), round(nrow(tele_norm) * 0.2, 0))
   # Depending on R-version and computer, different rows may be selected. 
-  # If that happens, results are different. 
+  # If that happens, results are different.
+  
+  assign(paste("data_test_", index, sep = ""), tele_norm[test_set,])
   
   # Create a train set and test set
   # First the predictors - all columns except the yyes column
@@ -199,7 +201,7 @@ for (index in c(2,4,5)) {
   
   confusionMatrix(knnPred, as.factor(tele_test_knn_labels), positive = "1")
   
-  assign(paste("knn_final_", index), as.data.frame(knnPred))
+  assign(paste("knn_final_", index, sep = ""), as.data.frame(knnPred))
   
 }
 ```
@@ -223,11 +225,11 @@ for (index in c(2,4,5)) {
   
   tele_train_lr$y <- as.factor(tele_train_lr$y)
   
-  lr_model <- glm(y ~ contact * month + campaign + pdaysdummy + poutcome + emp.var.rate + cons.price.idx + cons.conf.idx,
+  lr_model <- glm(y ~ month + campaign + pdaysdummy + emp.var.rate + cons.price.idx + cons.conf.idx,
                   family = "binomial", data = tele_train_lr)
   
   lr_predict <- as.data.frame(predict(lr_model, newdata = tele_test_lr, type = "response"))
-  lr_results <- ifelse(lr_predict$`predict(lr_model, newdata = tele_test_lr, type = "response")` > 0.25, 1, 0)
+  lr_results <- ifelse(lr_predict$`predict(lr_model, newdata = tele_test_lr, type = "response")` > 0.08, 1, 0)
   
   library(class)
   library(caret)
@@ -238,20 +240,37 @@ for (index in c(2,4,5)) {
   CrossTable(x = tele_test_lr$y, y = lr_results, prop.chisq = FALSE)
   confusionMatrix(as.factor(lr_results), as.factor(tele_test_lr$V1), positive = "1")
   
+  assign(paste("lr_final_", index, sep = ""), as.data.frame(lr_results))
+  
 }
 
 ```
 
 ```{r}
 
-ann_results <- yyes_prediction
-knn_results <- ifelse(as.numeric(knnPred) > 1, 1, 0)
-ann_results <- as.numeric(ann_results)
+knn_final_2 <- (as.numeric(knn_final_2$knnPred) - 1)
+knn_final_4 <- (as.numeric(knn_final_4$knnPred) - 1)
+knn_final_5 <- (as.numeric(knn_final_5$knnPred) - 1)
 
-final_pred <- ifelse((lr_results + knn_results + ann_results) > 0, 1, 0)
+final_pred_2 <- ifelse((as.numeric(lr_final_2$lr_results) + as.numeric(knn_final_2)) > 0, 1, 0)
+final_pred_2 <- as.data.frame(final_pred_2)
 
-CrossTable(x = tele_test_lr$y, y = final_pred, prop.chisq = FALSE)
-confusionMatrix(as.factor(final_pred), as.factor(tele_test_lr$V1), positive = "1")
+final_pred_4 <- ifelse((as.numeric(lr_final_4$lr_results) + as.numeric(knn_final_4)) > 0, 1, 0)
+final_pred_4 <- as.data.frame(final_pred_4)
+
+final_pred_5 <- ifelse((as.numeric(lr_final_5$lr_results) + as.numeric(knn_final_5)) > 0, 1, 0)
+final_pred_5 <- as.data.frame(final_pred_5)
+
+
+
+CrossTable(x = data_test_2$yyes, y = final_pred_2$final_pred_2, prop.chisq = FALSE)
+confusionMatrix(as.factor(final_pred_2$final_pred_2), as.factor(data_test_2$yyes), positive = "1")
+
+CrossTable(x = data_test_4$yyes, y = final_pred_4$final_pred_4, prop.chisq = FALSE)
+confusionMatrix(as.factor(final_pred_4$final_pred_4), as.factor(data_test_4$yyes), positive = "1")
+
+CrossTable(x = data_test_5$yyes, y = final_pred_5$final_pred_5, prop.chisq = FALSE)
+confusionMatrix(as.factor(final_pred_5$final_pred_5), as.factor(data_test_5$yyes), positive = "1")
 
 ```
 
