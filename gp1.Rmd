@@ -109,18 +109,18 @@ for (index in c(2,4,5)) {
   
   library(neuralnet)
   
-  ann_model <- neuralnet(formula = yyes ~ ., data = tele_train_ann, hidden = c(5,3))
+  ann_model <- neuralnet(formula = yyes ~ ., data = tele_train_ann, hidden = 2)
   
   tele_test_ann$extra <- tele_test_ann$yyes
   tele_test_ann$yyes <- NULL
   names(tele_test_ann)[names(tele_test_ann) == 'extra'] <- "yyes" 
   
-  ann_results <- neuralnet::compute(ann_model, tele_test_ann[1:53])
+  ann_results <- neuralnet::compute(ann_model, tele_test_ann[1:54])
   
   predicted_strength <- ann_results$net.result
   
   prediction_ann <- predict(ann_model, tele_test_ann)
-  yyes_prediction <- ifelse(prediction_ann < 0.5, 0, 1)
+  yyes_prediction <- ifelse(prediction_ann > 0.3, 1, 0)
   
   cor(predicted_strength, tele_test_ann$yyes)
   
@@ -252,13 +252,17 @@ knn_final_2 <- (as.numeric(knn_final_2$knnPred) - 1)
 knn_final_4 <- (as.numeric(knn_final_4$knnPred) - 1)
 knn_final_5 <- (as.numeric(knn_final_5$knnPred) - 1)
 
-final_pred_2 <- ifelse((as.numeric(lr_final_2$lr_results) + as.numeric(knn_final_2)) > 0, 1, 0)
+ann_final_2 <- as.data.frame(ann_final_2)
+ann_final_4 <- as.data.frame(ann_final_4)
+ann_final_5 <- as.data.frame(ann_final_5)
+
+final_pred_2 <- ifelse((as.numeric(lr_final_2$lr_results) + as.numeric(knn_final_2) + as.numeric(ann_final_2$V1)) > 1, 1, 0)
 final_pred_2 <- as.data.frame(final_pred_2)
 
-final_pred_4 <- ifelse((as.numeric(lr_final_4$lr_results) + as.numeric(knn_final_4)) > 0, 1, 0)
+final_pred_4 <- ifelse((as.numeric(lr_final_4$lr_results) + as.numeric(knn_final_4) + as.numeric(ann_final_4$V1)) > 1, 1, 0)
 final_pred_4 <- as.data.frame(final_pred_4)
 
-final_pred_5 <- ifelse((as.numeric(lr_final_5$lr_results) + as.numeric(knn_final_5)) > 0, 1, 0)
+final_pred_5 <- ifelse((as.numeric(lr_final_5$lr_results) + as.numeric(knn_final_5) + as.numeric(ann_final_5$V1)) > 1, 1, 0)
 final_pred_5 <- as.data.frame(final_pred_5)
 
 
